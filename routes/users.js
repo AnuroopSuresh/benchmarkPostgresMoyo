@@ -3,7 +3,7 @@ const router = express.Router();
 const {nativePostgresPool, knexPool, vNeoAppAuth, vNeoAppDb} = require('../config/dbConfig');
 
 /* GET users listing. */
-router.post('/createUser', async function (req, res) {
+/*router.post('/createUser', async function (req, res) {
     try {
 
         const reqBody = req.body;
@@ -120,6 +120,24 @@ router.post('/getLoginToken', async function (req, res) {
     } catch (e) {
         console.error('users./getLoginToken: ', e);
         res.status(400).send("Bad Request " + e.message)
+    }
+});*/
+
+router.post('', async function (req, res) {
+    let client;
+    try {
+        client = await nativePostgresPool.connect();
+        const userObj = req.body;
+
+        const queryStr = `INSERT INTO "User" ("name","mobile") VALUES ('${userObj.name}','${userObj.mobile}');`;
+        const queryResult = await client.query(queryStr);
+        res.send(queryResult)
+
+    } catch (e) {
+        console.error('users.post: ', e);
+        res.status(400).send("Bad Request " + e.message)
+    } finally {
+        client.release();
     }
 });
 module.exports = router;

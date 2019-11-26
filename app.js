@@ -6,6 +6,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const channelRouter = require('./routes/channel');
 const moyoRouter = require('./routes/moyo');
@@ -27,12 +28,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // api routes
-
-app.use('/user', usersRouter);
+app.use('', indexRouter);
+/*app.use('/user', usersRouter);
 app.use('/channel', channelRouter);
 app.use('/moyo', moyoRouter);
 app.use('/user-channel', userChannelRouter);
-app.use('/user-moyo', userMoyoRouter);
+app.use('/user-moyo', userMoyoRouter);*/
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

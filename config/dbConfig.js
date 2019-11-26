@@ -1,5 +1,5 @@
 //native pool of postgress to run direct sql queries
-/*const {Pool} = require('pg');
+const {Pool} = require('pg');
 const dbPool = new Pool({
     host: 'localhost',
     port: '5432',
@@ -9,9 +9,9 @@ const dbPool = new Pool({
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
-});*/
+});
 
-const nativePool = undefined;
+const nativePool = dbPool;
 
 //knex options for for db creation
 const knexDbConConfigOptions = {
@@ -30,15 +30,15 @@ const knexDbConConfigOptions = {
 const knexPool = require('knex')(knexDbConConfigOptions);
 
 // firebase
-const admin = require('firebase-admin');
-const serviceAccount = require("../admin-sdk.json");
+/*const admin = require('firebase-admin');
+const serviceAccount = require("../admin-sdk.json");s
 const fire = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://vneo-c2935.firebaseio.com"
-});
+});*/
 
-const vNeoAppAuth = fire.auth();
-const vNeoAppDb = fire.firestore();
+const vNeoAppAuth = undefined;
+const vNeoAppDb = undefined;
 
 module.exports = {
     nativePostgresPool: nativePool,

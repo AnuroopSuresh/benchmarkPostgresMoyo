@@ -80,14 +80,15 @@ router.post('/publishMoyoToUser', async function (req, res) {
     try {
         client = await nativePostgresPool.connect();
 
-        let moyoList = req.body;
-        for(let moyoObj of moyoList){
+        let moyoList = dummyData.dummyMoyoList;
+        let responseObj = [];
+        for (let moyoObj of moyoList) {
 
-            let queryStr = `INSERT INTO "Moyo" ("name","description","channelId","status") 
+            let queryStr = `INSERT INTO "Moyo" ("name","description","channelid","status") 
         VALUES ('${moyoObj.name}','${moyoObj.description}','${moyoObj.channelID}','${moyoObj.status}') RETURNING *;`;
             let queryResult = await client.query(queryStr);
             const insertedMoyoRow = queryResult.rows[0];
-
+            responseObj.push(insertedMoyoRow);
             // get user id by phone number
             let userObj;
             for (let phone of moyoObj.Userlist) {
@@ -96,17 +97,14 @@ router.post('/publishMoyoToUser', async function (req, res) {
                 userObj = queryResult.rows[0];
                 if (userObj) {
                     queryStr = `INSERT INTO "USER_MOYO_JUNCTION" ("User","Moyo") VALUES (${userObj.id},${insertedMoyoRow.id})`;
-                } else {
-                    throw new Error('No User exist for phone ' + phone);
                 }
             }
         }
 
-
-        res.send(insertedMoyoRow)
+        res.send(responseObj)
 
     } catch (e) {
-        console.error('index./channel: ', e);
+        console.error('index./publishMoyoToUser: ', e);
         res.status(400).send("Bad Request " + e.message)
     } finally {
         client.release();

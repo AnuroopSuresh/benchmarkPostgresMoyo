@@ -91,8 +91,9 @@ function onListening() {
 
     try {
         bootstrap.start().then(() => {
-            console.log('www.onListening: bootstrap code completed : running on port ',addr.port);
+
         });
+        console.log('www.onListening: bootstrap code completed : running on port ',addr.port);
     } catch (e) {
         console.error("www.onListening: error ", e);
     }

@@ -14,7 +14,7 @@ const dbPool = new Pool({
 const nativePool = dbPool;
 
 //knex options for for db creation
-const knexDbConConfigOptions = {
+/*const knexDbConConfigOptions = {
     client: 'pg',
     version: '10.10',
     connection: {
@@ -25,10 +25,11 @@ const knexDbConConfigOptions = {
         database: 'postgres'
     },
     pool: {min: 0, max: 100}
-};
+};*/
 
-const knexPool = require('knex')(knexDbConConfigOptions);
+// const knexPool = require('knex')(knexDbConConfigOptions);
 
+const knexPool = undefined;
 // firebase
 /*const admin = require('firebase-admin');
 const serviceAccount = require("../admin-sdk.json");s

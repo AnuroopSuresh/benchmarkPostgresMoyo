@@ -97,6 +97,7 @@ router.post('/publishMoyoToUser', async function (req, res) {
                 userObj = queryResult.rows[0];
                 if (userObj) {
                     queryStr = `INSERT INTO "USER_MOYO_JUNCTION" ("User","Moyo") VALUES (${userObj.id},${insertedMoyoRow.id})`;
+                    await client.query(queryStr)
                 }
             }
         }

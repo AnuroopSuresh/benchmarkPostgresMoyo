@@ -81,25 +81,37 @@ router.post('/publishMoyoToUser', async function (req, res) {
         client = await nativePostgresPool.connect();
 
         let moyoList = dummyData.dummyMoyoList;
-        let responseObj = [];
+        let responseObj = [], queryStr, queryResult;
         for (let moyoObj of moyoList) {
 
-            let queryStr = `INSERT INTO "Moyo" ("name","description","channelid","status") 
+            queryStr = `INSERT INTO "Moyo" ("name","description","channelid","status") 
         VALUES ('${moyoObj.name}','${moyoObj.description}','${moyoObj.channelID}','${moyoObj.status}') RETURNING *;`;
-            let queryResult = await client.query(queryStr);
+            queryResult = await client.query(queryStr);
             const insertedMoyoRow = queryResult.rows[0];
             responseObj.push(insertedMoyoRow);
             // get user id by phone number
-            let userObj;
-            for (let phone of moyoObj.Userlist) {
-                queryStr = `SELECT * from "User" where "phone" like '${phone}'`;
-                queryResult = await client.query(queryStr);
-                userObj = queryResult.rows[0];
-                if (userObj) {
-                    queryStr = `INSERT INTO "USER_MOYO_JUNCTION" ("User","Moyo") VALUES (${userObj.id},${insertedMoyoRow.id})`;
-                    await client.query(queryStr)
+            let userObj, phoneList = moyoObj.Userlist, phoneListString = '', userIdList = [];
+            let lengthOfUserList = moyoObj.Userlist.length;
+            for (let i = 0; i < lengthOfUserList; i++) {
+                phoneListString += `'${phoneList[i]}'`;
+                if (i < lengthOfUserList - 1) {
+                    phoneListString += `,`
+                }
+
+            }
+            queryStr = `SELECT id from "User" where "phone" IN (${phoneListString})`;
+            queryResult = await client.query(queryStr);
+
+            let userMoyoString = '';
+            let idsLength = queryResult.rows.length;
+            for (let i = 0; i < idsLength; i++) {
+                userMoyoString += `(${queryResult.rows[i].id},${insertedMoyoRow.id})`;
+                if (i < idsLength - 1) {
+                    userMoyoString += ','
                 }
             }
+            queryStr = `INSERT INTO "USER_MOYO_JUNCTION" ("User","Moyo") VALUES ${userMoyoString}`;
+            queryResult = await client.query(queryStr);
         }
 
         res.send(responseObj)
